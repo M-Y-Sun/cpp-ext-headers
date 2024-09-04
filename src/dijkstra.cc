@@ -10,51 +10,49 @@
 namespace ext
 {
 
-template <typename T> class djk_graph final
+namespace djk
+{
+
+// graph node
+struct node_t {
+    size_t  id;
+    node_t *prev;
+    int64_t dist;
+
+    // for std::iota
+    node_t &
+    operator++ ()
+    {
+        ++this->id;
+        return *this;
+    }
+};
+
+// node connection (for adjacency list)
+struct nbr_t {
+    int64_t weight;
+    node_t *node;
+};
+
+class graph final
 {
 private:
-    // ------ STRUCTS ------ //
-
-    // graph node
-    struct node_t_ {
-        size_t   id;
-        node_t_ *prev;
-        T        dist;
-
-        // for std::iota
-        node_t_ &
-        operator++ ()
-        {
-            ++this->id;
-            return *this;
-        }
-    };
-
-    // node connection (for adjacency list)
-    struct nbr_t_ {
-        T        weight;
-        node_t_ *node;
-    };
-
-    // ------ MEMBER VARIABLES ------ //
-
-    static constexpr const T MAXVAL_ = std::numeric_limits<T> ().max ();
+    static constexpr const int64_t MAXVAL_
+        = std::numeric_limits<int64_t> ().max ();
 
     // stores all defined nodes that will be updated in calls to astar
-    std::vector<node_t_> nodes_;
+    std::vector<node_t> nodes_;
 
     // adjacency list representing the graph
-    std::vector<std::vector<nbr_t_> > adj_;
+    std::vector<std::vector<nbr_t> > adj_;
 
     // visited array
     std::vector<bool> visited_;
 
-    // ------ PRIVATE FUNCTIONS ------ //
-
     /** Backtracks edges until the start node.
-     * @return The path to the end node. */
+     * @return int64_the path to the end node. */
     std::vector<size_t>
-    backtrack_ (node_t_ end)
+    backtrack_ (node_t end)
     {
         std::vector<size_t> path;
 
@@ -74,7 +72,7 @@ private:
     reset_nodes_ ()
     {
         std::iota (nodes_.begin (), nodes_.end (),
-                   node_t_ ({ 0, nullptr, MAXVAL_ }));
+                   node_t ({ 0, nullptr, MAXVAL_ }));
     }
 
     /** Set up class instance for dijkstra traversal */
@@ -87,44 +85,44 @@ private:
     }
 
 public:
-    djk_graph (size_t len)
-        : nodes_ (len, node_t_ ()), adj_ (len, std::vector<nbr_t_> ())
+    graph (size_t len)
+        : nodes_ (len, node_t ()), adj_ (len, std::vector<nbr_t> ())
     {
         reset_nodes_ ();
     }
 
     /** Adds an undirected edge. */
     void
-    add_edge_ud (size_t n1_id, size_t n2_id, T weight)
+    add_edge_ud (size_t n1_id, size_t n2_id, int64_t weight)
     {
         adj_[n1_id].push_back ({ weight, &nodes_[n2_id] });
     }
 
     /** Adds a directed edge. */
     void
-    add_edge_d (size_t n1_id, size_t n2_id, T weight)
+    add_edge_d (size_t n1_id, size_t n2_id, int64_t weight)
     {
         adj_[n1_id].push_back ({ weight, &nodes_[n2_id] });
         adj_[n2_id].push_back ({ weight, &nodes_[n1_id] });
     }
 
-    /** @param `start`: The start node.
-     * @param `end`: The target "ending" node.
-     * @return The weighted path length and a vector of the indices of each
-     * node in the path. */
-    std::pair<T, std::vector<size_t> >
+    /** @param `start`: int64_the start node.
+     * @param `end`: int64_the target "ending" node.
+     * @return int64_the weighted path length and a vector of the indices of
+     * each node in the path. */
+    std::pair<int64_t, std::vector<size_t> >
     dijkstra (size_t start, size_t end)
     {
         setup_ (start);
 
         // priority queue comparator to sort greatest
-        auto node_gt = [] (const node_t_ lhs, const node_t_ rhs) {
+        auto node_gt = [] (const node_t lhs, const node_t rhs) {
             return lhs.dist > rhs.dist;
         };
 
         // stores values instead of pointers for the coexistence of updated
         // nodes
-        std::priority_queue<node_t_, std::vector<node_t_>, decltype (node_gt)>
+        std::priority_queue<node_t, std::vector<node_t>, decltype (node_gt)>
             pq;
 
         // push the starting node onto the pq
@@ -134,7 +132,7 @@ public:
         while (!pq.empty ()) {
             // visit the current node; store it at the top and pop it from the
             // pq
-            node_t_ cur = pq.top ();
+            node_t cur = pq.top ();
             pq.pop ();
 
             // if we visited the end, we are done; break
@@ -151,9 +149,9 @@ public:
 
             // queue each neighbor of the current node and update values if
             // needed
-            for (nbr_t_ &next : adj_[cur.id]) {
+            for (nbr_t &next : adj_[cur.id]) {
                 // new distance is cur distance + weight to next node
-                T distval = cur.dist + next.weight;
+                int64_t distval = cur.dist + next.weight;
 
                 // if distance is smaller, update the distance and previous
                 // node
@@ -173,7 +171,7 @@ public:
         std::vector<size_t> path = backtrack_ (nodes_[end]);
         int64_t             plen = nodes_[end].dist;
 
-        // if the weighted length is still INT64_MAX, it means it was not
+        // if the weighted length is still INint64_t64_MAX, it means it was not
         // updated due to there being no path from the start to the end. in
         // this case, return -1 as the length and clear the path vector
         if (plen == MAXVAL_) {
@@ -185,6 +183,8 @@ public:
     }
 };
 
+} // namespace djk
+
 } // namespace ext
 
 int
@@ -195,7 +195,7 @@ main ()
               << std::flush;
     std::cin >> n >> e;
 
-    ext::djk_graph<int64_t> graph (n);
+    ext::djk::graph graph (n);
 
     size_t start, end;
     std::cout << "enter start and end, separated by a space:\n> "

@@ -11,49 +11,47 @@
 namespace ext
 {
 
-template <typename T> class ast_graph final
+namespace ast
+{
+
+struct node_t {
+    size_t  id;
+    node_t *prev;
+    int64_t wdist; // weighted distance
+    int64_t pdist; // physical distance
+
+    node_t &
+    operator++ ()
+    {
+        ++this->id;
+        return *this;
+    }
+};
+
+struct nbr_t {
+    int64_t weight;
+    node_t *node;
+};
+
+class graph final
 {
 private:
-    // ------ STRUCTS ------ //
-
-    struct node_t_ {
-        size_t   id;
-        node_t_ *prev;
-        T        wdist; // weighted distance
-        T        pdist; // physical distance
-
-        node_t_ &
-        operator++ ()
-        {
-            ++this->id;
-            return *this;
-        }
-    };
-
-    struct nbr_t_ {
-        T        weight;
-        node_t_ *node;
-    };
-
-    // ------ MEMBER VARIABLES ------ //
-
-    static constexpr const T MAXVAL_ = std::numeric_limits<T> ().max ();
+    static constexpr const int64_t MAXVAL_
+        = std::numeric_limits<int64_t> ().max ();
 
     // stores all defined nodes that will be updated in calls to astar
-    std::vector<node_t_> nodes_;
+    std::vector<node_t> nodes_;
 
     // adjacency list representing the graph
-    std::vector<std::vector<nbr_t_> > adj_;
+    std::vector<std::vector<nbr_t> > adj_;
 
     // visited array
     std::vector<bool> visited_;
 
-    // ------ PRIVATE FUNCTIONS ------ //
-
     /** Backtracks edges until the start node.
-     * @return The path to the end node. */
+     * @return int64_the path to the end node. */
     std::vector<size_t>
-    backtrack_ (node_t_ end)
+    backtrack_ (node_t end)
     {
         std::vector<size_t> path;
 
@@ -73,12 +71,12 @@ private:
     reset_nodes_ ()
     {
         std::iota (nodes_.begin (), nodes_.end (),
-                   node_t_ ({ 0, nullptr, MAXVAL_, MAXVAL_ }));
+                   node_t ({ 0, nullptr, MAXVAL_, MAXVAL_ }));
     }
 
     /** Sets up the class instance for running astar. */
     void
-    setup_ (size_t start, const std::vector<T> &pdists)
+    setup_ (size_t start, const std::vector<int64_t> &pdists)
     {
         assert (pdists.size () == nodes_.size ());
 
@@ -93,49 +91,49 @@ private:
     }
 
 public:
-    ast_graph (size_t len)
-        : nodes_ (len, node_t_ ()), adj_ (len, std::vector<nbr_t_> ())
+    graph (size_t len)
+        : nodes_ (len, node_t ()), adj_ (len, std::vector<nbr_t> ())
     {
         reset_nodes_ ();
     }
 
     /** Adds an undirected edge. */
     void
-    add_edge_ud (size_t n1_id, size_t n2_id, T weight)
+    add_edge_ud (size_t n1_id, size_t n2_id, int64_t weight)
     {
         adj_[n1_id].push_back ({ weight, &nodes_[n2_id] });
     }
 
     /** Adds a directed edge. */
     void
-    add_edge_d (size_t n1_id, size_t n2_id, T weight)
+    add_edge_d (size_t n1_id, size_t n2_id, int64_t weight)
     {
         adj_[n1_id].push_back ({ weight, &nodes_[n2_id] });
         adj_[n2_id].push_back ({ weight, &nodes_[n1_id] });
     }
 
-    /** @param `start`: The start node.
-     * @param `end`: The target "ending" node.
+    /** @param `start`: int64_the start node.
+     * @param `end`: int64_the target "ending" node.
      * @param `pdists`: A vector containing the physical distances between the
      * start node and the other nodes.
-     * @return The weighted path length and a vector of the indices of each
-     * node in the path. */
-    std::pair<T, std::vector<size_t> >
-    astar (size_t start, size_t end, const std::vector<T> &pdists)
+     * @return int64_the weighted path length and a vector of the indices of
+     * each node in the path. */
+    std::pair<int64_t, std::vector<size_t> >
+    astar (size_t start, size_t end, const std::vector<int64_t> &pdists)
     {
         setup_ (start, pdists);
 
-        auto node_gt = [] (const node_t_ lhs, const node_t_ rhs) {
+        auto node_gt = [] (const node_t lhs, const node_t rhs) {
             // compare using an additonal physical distance heuristic
             return lhs.wdist + lhs.pdist > rhs.wdist + rhs.pdist;
         };
 
-        std::priority_queue<node_t_, std::vector<node_t_>, decltype (node_gt)>
+        std::priority_queue<node_t, std::vector<node_t>, decltype (node_gt)>
             pq;
         pq.push (nodes_[start]);
 
         while (!pq.empty ()) {
-            node_t_ cur = pq.top ();
+            node_t cur = pq.top ();
             pq.pop ();
 
             if (cur.id == end)
@@ -144,8 +142,8 @@ public:
             if (cur.wdist != nodes_[cur.id].wdist)
                 continue;
 
-            for (nbr_t_ &next : adj_[cur.id]) {
-                T wdistval = cur.wdist + next.weight;
+            for (nbr_t &next : adj_[cur.id]) {
+                int64_t wdistval = cur.wdist + next.weight;
 
                 if (next.node->wdist > wdistval) {
                     next.node->wdist = wdistval;
@@ -156,7 +154,7 @@ public:
         }
 
         std::vector<size_t> path = backtrack_ (nodes_[end]);
-        T                   plen = nodes_[end].wdist;
+        int64_t             plen = nodes_[end].wdist;
 
         if (plen == MAXVAL_) {
             plen = -1;
@@ -166,6 +164,8 @@ public:
         return { plen, path };
     }
 };
+
+} // namespace ast
 
 } // namespace ext
 
@@ -177,7 +177,7 @@ main ()
               << std::flush;
     std::cin >> n >> e;
 
-    ext::ast_graph<int64_t> graph (n);
+    ext::ast::graph graph (n);
 
     int start, end;
     std::cout << "enter start and end, separated by a space:\n> "

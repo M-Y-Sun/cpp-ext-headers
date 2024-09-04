@@ -7,7 +7,7 @@
 #include <vector>
 
 /** A data structure that can answer point update and range maximum queries. */
-template <class T> class lazy_segment_tree
+template <typename T> class lazy_segment_tree
 {
 private:
     struct node_t_ {

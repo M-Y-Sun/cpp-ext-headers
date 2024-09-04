@@ -1,15 +1,13 @@
 // https://usaco.guide/CPH.pdf#page=99
 // based on problem cses 1649: https://cses.fi/problemset/task/1649/
 
-// #include <algorithm>
 #include <climits>
-// #include <cstdint>
 #include <cstdio>
 #include <functional>
 #include <vector>
 
 /** A data structure that can answer point update and range maximum queries. */
-template <class T> class segment_tree
+template <typename T> class segment_tree
 {
 private:
     const T DEFAULT_;

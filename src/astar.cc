@@ -8,162 +8,136 @@
 #include <utility>
 #include <vector>
 
+#include "../include/graph.hh"
+
 namespace ext
 {
 
 namespace ast
 {
 
-struct node_t {
-    size_t  id;
-    node_t *prev;
-    int64_t wdist; // weighted distance
-    int64_t pdist; // physical distance
+// stores all defined nodes that will be updated in calls to astar
+std::vector<node_t> nodes_;
 
-    node_t &
-    operator++ ()
-    {
-        ++this->id;
-        return *this;
-    }
-};
+// adjacency list representing the graph
+std::vector<std::vector<nbr_t> > adj_;
 
-struct nbr_t {
-    int64_t weight;
-    node_t *node;
-};
+// visited array
+std::vector<bool> visited_;
 
-class graph final
+/** Backtracks edges until the start node.
+ * @return int64_the path to the end node. */
+std::vector<size_t>
+backtrack_ (node_t end)
 {
-private:
-    static constexpr const int64_t MAXVAL_
-        = std::numeric_limits<int64_t> ().max ();
+    std::vector<size_t> path;
 
-    // stores all defined nodes that will be updated in calls to astar
-    std::vector<node_t> nodes_;
-
-    // adjacency list representing the graph
-    std::vector<std::vector<nbr_t> > adj_;
-
-    // visited array
-    std::vector<bool> visited_;
-
-    /** Backtracks edges until the start node.
-     * @return int64_the path to the end node. */
-    std::vector<size_t>
-    backtrack_ (node_t end)
-    {
-        std::vector<size_t> path;
-
-        while (end.prev != nullptr) {
-            path.push_back (end.id);
-            end = *end.prev;
-        }
-
+    while (end.prev != nullptr) {
         path.push_back (end.id);
-        std::reverse (path.begin (), path.end ());
-
-        return path;
+        end = *end.prev;
     }
 
-    /** Initializes the nodes_ array with increasing id */
-    inline void
-    reset_nodes_ ()
-    {
-        std::iota (nodes_.begin (), nodes_.end (),
-                   node_t ({ 0, nullptr, MAXVAL_, MAXVAL_ }));
-    }
+    path.push_back (end.id);
+    std::reverse (path.begin (), path.end ());
 
-    /** Sets up the class instance for running astar. */
-    void
-    setup_ (size_t start, const std::vector<int64_t> &pdists)
-    {
-        assert (pdists.size () == nodes_.size ());
+    return path;
+}
 
-        reset_nodes_ ();
+/** Initializes the nodes_ array with increasing id */
+inline void
+graph::reset_nodes_ ()
+{
+    std::iota (nodes_.begin (), nodes_.end (),
+               node_t ({ 0, nullptr, INT64_MAX, INT64_MAX }));
+}
 
-        visited_.assign (nodes_.size (), false);
+/** Sets up the class instance for running astar. */
+void
+graph::setup_ (size_t start, const std::vector<int64_t> &pdists)
+{
+    assert (pdists.size () == nodes_.size ());
 
-        for (size_t i = 0; i < nodes_.size (); ++i)
-            nodes_[i].pdist = pdists[i];
+    reset_nodes_ ();
 
-        nodes_[start].wdist = 0;
-    }
+    visited_.assign (nodes_.size (), false);
 
-public:
-    graph (size_t len)
-        : nodes_ (len, node_t ()), adj_ (len, std::vector<nbr_t> ())
-    {
-        reset_nodes_ ();
-    }
+    for (size_t i = 0; i < nodes_.size (); ++i)
+        nodes_[i].pdist = pdists[i];
 
-    /** Adds an undirected edge. */
-    void
-    add_edge_ud (size_t n1_id, size_t n2_id, int64_t weight)
-    {
-        adj_[n1_id].push_back ({ weight, &nodes_[n2_id] });
-    }
+    nodes_[start].wdist = 0;
+}
 
-    /** Adds a directed edge. */
-    void
-    add_edge_d (size_t n1_id, size_t n2_id, int64_t weight)
-    {
-        adj_[n1_id].push_back ({ weight, &nodes_[n2_id] });
-        adj_[n2_id].push_back ({ weight, &nodes_[n1_id] });
-    }
+graph::graph (size_t len)
+    : nodes_ (len, node_t ()), adj_ (len, std::vector<nbr_t> ())
+{
+    reset_nodes_ ();
+}
 
-    /** @param `start`: int64_the start node.
-     * @param `end`: int64_the target "ending" node.
-     * @param `pdists`: A vector containing the physical distances between the
-     * start node and the other nodes.
-     * @return int64_the weighted path length and a vector of the indices of
-     * each node in the path. */
-    std::pair<int64_t, std::vector<size_t> >
-    astar (size_t start, size_t end, const std::vector<int64_t> &pdists)
-    {
-        setup_ (start, pdists);
+/** Adds an undirected edge. */
+void
+graph::add_edge_ud (size_t n1_id, size_t n2_id, int64_t weight)
+{
+    adj_[n1_id].push_back ({ weight, &nodes_[n2_id] });
+}
 
-        auto node_gt = [] (const node_t lhs, const node_t rhs) {
-            // compare using an additonal physical distance heuristic
-            return lhs.wdist + lhs.pdist > rhs.wdist + rhs.pdist;
-        };
+/** Adds a directed edge. */
+void
+graph::add_edge_d (size_t n1_id, size_t n2_id, int64_t weight)
+{
+    adj_[n1_id].push_back ({ weight, &nodes_[n2_id] });
+    adj_[n2_id].push_back ({ weight, &nodes_[n1_id] });
+}
 
-        std::priority_queue<node_t, std::vector<node_t>, decltype (node_gt)>
-            pq;
-        pq.push (nodes_[start]);
+/** @param `start`: int64_the start node.
+ * @param `end`: int64_the target "ending" node.
+ * @param `pdists`: A vector containing the physical distances between the
+ * start node and the other nodes.
+ * @return int64_the weighted path length and a vector of the indices of
+ * each node in the path. */
+std::pair<int64_t, std::vector<size_t> >
+graph::astar (size_t start, size_t end, const std::vector<int64_t> &pdists)
+{
+    setup_ (start, pdists);
 
-        while (!pq.empty ()) {
-            node_t cur = pq.top ();
-            pq.pop ();
+    auto node_gt = [] (const node_t lhs, const node_t rhs) {
+        // compare using an additonal physical distance heuristic
+        return lhs.wdist + lhs.pdist > rhs.wdist + rhs.pdist;
+    };
 
-            if (cur.id == end)
-                break;
+    std::priority_queue<node_t, std::vector<node_t>, decltype (node_gt)> pq;
+    pq.push (nodes_[start]);
 
-            if (cur.wdist != nodes_[cur.id].wdist)
-                continue;
+    while (!pq.empty ()) {
+        node_t cur = pq.top ();
+        pq.pop ();
 
-            for (nbr_t &next : adj_[cur.id]) {
-                int64_t wdistval = cur.wdist + next.weight;
+        if (cur.id == end)
+            break;
 
-                if (next.node->wdist > wdistval) {
-                    next.node->wdist = wdistval;
-                    next.node->prev  = &nodes_[cur.id];
-                    pq.push (*next.node);
-                }
+        if (cur.wdist != nodes_[cur.id].wdist)
+            continue;
+
+        for (nbr_t &next : adj_[cur.id]) {
+            int64_t wdistval = cur.wdist + next.weight;
+
+            if (next.node->wdist > wdistval) {
+                next.node->wdist = wdistval;
+                next.node->prev  = &nodes_[cur.id];
+                pq.push (*next.node);
             }
         }
-
-        std::vector<size_t> path = backtrack_ (nodes_[end]);
-        int64_t             plen = nodes_[end].wdist;
-
-        if (plen == MAXVAL_) {
-            plen = -1;
-            path.clear ();
-        }
-
-        return { plen, path };
     }
-};
+
+    std::vector<size_t> path = backtrack_ (nodes_[end]);
+    int64_t             plen = nodes_[end].wdist;
+
+    if (plen == INT64_MAX) {
+        plen = -1;
+        path.clear ();
+    }
+
+    return { plen, path };
+}
 
 } // namespace ast
 

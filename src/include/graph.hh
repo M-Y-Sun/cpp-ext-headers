@@ -1,5 +1,4 @@
-#ifndef GRAPH_HH
-#define GRAPH_HH
+#pragma once
 
 #include <cstddef>
 #include <utility>
@@ -139,5 +138,3 @@ public:
 } // namespace ast
 
 } // namespace ext
-
-#endif

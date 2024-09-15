@@ -44,11 +44,10 @@ public:
 namespace lz_segtr
 {
 
-enum qtype_e { ADD, SET, NONE };
-
-template <typename T> struct query_t {
-    qtype_e type = NONE;
-    T       val  = 0;
+template <typename T> struct node_t {
+    T val;
+    T lz_add;
+    T lz_set;
 };
 
 template <typename T> class tree final
@@ -61,9 +60,8 @@ template <typename T> class tree final
     // the parent of tree[i] is tree[i / 2]
     // and its children are tree[2i] and tree[2i + 1]
 
-    std::vector<T>           tree_; // length of this is 2 * len
-    std::vector<query_t<T> > lazy_;
-    size_t                   len_; // simulated "length" of the array
+    std::vector<node_t<T> > tree_; // length of this is 2 * len
+    size_t                  len_;  // simulated "length" of the array
 
     std::function<T (const T &, const T &)> queryfunc;
 
@@ -73,25 +71,23 @@ template <typename T> class tree final
 
     void pushdown_ (size_t pos, size_t lb, size_t mid, size_t rb);
 
-    void build_ (size_t pos, size_t lb, size_t rb, const std::vector<T> &arr);
-
-    void apply_ (size_t pos, size_t len, const query_t<T> &q);
-
-    void upd_ (size_t start, size_t end, const query_t<T> &q, size_t pos_,
-               size_t lb_, size_t rb_);
-
-    T query_ (size_t start, size_t end, size_t pos_, size_t lb_, size_t rb_);
+    void build_ (int pos, int lb, int rb, const std::vector<T> &arr);
 
 public:
     tree (size_t len, T dft, std::vector<T> arr,
           std::function<T (const T &, const T &)> const &queryfunc);
 
     /** Adds a value to a range of elements. */
-    void upd (size_t start, size_t end, const query_t<T> &q);
+    void add (size_t start, size_t end, T val, size_t pos_, size_t lb_,
+              size_t rb_);
+
+    /** Sets the value to a range of elements to another value. */
+    void set (size_t start, size_t end, T val, size_t pos_, size_t lb_,
+              size_t rb_);
 
     /** @return Queries the range [start, end) recursively with O(log n) time
      * complexity.*/
-    T query (size_t start, size_t end);
+    T query (size_t start, size_t end, size_t pos_, size_t lb_, size_t rb_);
 };
 
 } // namespace lz_segtr

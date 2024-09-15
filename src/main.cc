@@ -54,8 +54,11 @@ int
 main ()
 {
     int nodes, edges;
-    std::cout << "------ DFS and BFS ------\n";
-    std::cout << "input nodes and edges, separated by a space\n> "
+
+    // ------ DFS and BFS ------ //
+
+    std::cout << "------DFS and BFS------\n";
+    std::cout << "input number of nodes and edges, separated by a space\n> "
               << std::flush;
     std::cin >> nodes >> edges;
 
@@ -84,6 +87,68 @@ main ()
     std::cout << "\n------BFS------\n";
     bfs (adj, start, &visited);
     std::cout << std::endl;
+
+    // ------ DIJKSTRA and ASTAR ------ //
+
+    std::cout << "------SHORTEST PATH------\n";
+    std::cout << "input number of nodes and edges, separated by a space\n> "
+              << std::flush;
+    std::cin >> nodes >> edges;
+
+    ext::djk::graph djk_graph (nodes);
+    ext::ast::graph ast_graph (nodes);
+
+    int end;
+    std::cout << "enter start and end, separated by a space:\n> "
+              << std::flush;
+    std::cin >> start >> end;
+
+    std::cout << "input distances to start (ignored by dijkstra), separated "
+                 "by a space:\n> "
+              << std::flush;
+
+    std::vector<int64_t> pdists (nodes, 0);
+
+    for (int i = 0; i < nodes; ++i)
+        std::cin >> pdists[i];
+
+    std::cout << "input nodes and weight, separated by a space:\n";
+    for (int i = 0; i < edges; ++i) {
+        std::cout << "> " << std::flush;
+
+        int n1, n2, weight;
+        std::cin >> n1 >> n2 >> weight;
+
+        djk_graph.add_edge_d (n1, n2, weight);
+        ast_graph.add_edge_d (n1, n2, weight);
+    }
+
+    std::pair<int64_t, std::vector<size_t> > ans
+        = djk_graph.traverse (start, end);
+
+    std::cout << "\n------DIJKSTRA------\nWeighted path length: " << ans.first
+              << '\n';
+
+    std::cout << "Path:\n";
+    for (size_t i = 0; i < ans.second.size (); ++i) {
+        std::cout << ans.second[i];
+        if (i < ans.second.size () - 1)
+            std::cout << " -> ";
+    }
+
+    ans = ast_graph.traverse (start, end, pdists);
+
+    std::cout << "\n------ASTAR------\nWeighted path length: " << ans.first
+              << '\n';
+
+    std::cout << "path:\n";
+    for (size_t i = 0; i < ans.second.size (); ++i) {
+        std::cout << ans.second[i];
+        if (i < ans.second.size () - 1)
+            std::cout << " -> ";
+    }
+
+    std::cout << '\n';
 
     return 0;
 }

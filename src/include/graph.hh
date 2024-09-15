@@ -65,7 +65,7 @@ public:
      * @param `end`: int64_the target "ending" node.
      * @return int64_the weighted path length and a vector of the indices
      * of each node in the path. */
-    std::pair<int64_t, std::vector<size_t> > dijkstra (size_t start,
+    std::pair<int64_t, std::vector<size_t> > traverse (size_t start,
                                                        size_t end);
 };
 
@@ -132,7 +132,7 @@ public:
      * @return int64_the weighted path length and a vector of the indices of
      * each node in the path. */
     std::pair<int64_t, std::vector<size_t> >
-    astar (size_t start, size_t end, const std::vector<int64_t> &pdists);
+    traverse (size_t start, size_t end, const std::vector<int64_t> &pdists);
 };
 
 } // namespace ast

@@ -207,41 +207,42 @@ tree<T>::query (size_t start, size_t end, size_t pos_, size_t lb_, size_t rb_)
 
 } // namespace ext
 
-int
-main ()
-{
-    int n, q;
-    scanf ("%d%d", &n, &q);
-
-    // must be 1 indexed so lc works (so 0 * 2 = 0 doesnt happen)
-    std::vector<int64_t> arr (n + 1, 0);
-
-    for (int i = 1; i <= n; ++i)
-        scanf ("%lld", &arr[i]);
-
-    ext::lz_segtr::tree<int64_t> segtree (
-        n, 0, arr, [] (const int64_t &x, const int64_t &y) { return x + y; });
-
-    while (q--) {
-        int query_type;
-        scanf ("%d", &query_type);
-
-        int64_t a, b, x;
-        switch (query_type) {
-            case 1:
-                scanf ("%lld%lld%lld", &a, &b, &x);
-                segtree.add (a, b, x, 1, 1, n);
-                break;
-            case 2:
-                scanf ("%lld%lld%lld", &a, &b, &x);
-                segtree.set (a, b, x, 1, 1, n);
-                break;
-            case 3:
-                scanf ("%lld%lld", &a, &b);
-                printf ("%lld\n", segtree.query (a, b, 1, 1, n));
-                break;
-        }
-    }
-
-    return 0;
-}
+// int
+// main ()
+// {
+//     int n, q;
+//     scanf ("%d%d", &n, &q);
+//
+//     // must be 1 indexed so lc works (so 0 * 2 = 0 doesnt happen)
+//     std::vector<int64_t> arr (n + 1, 0);
+//
+//     for (int i = 1; i <= n; ++i)
+//         scanf ("%lld", &arr[i]);
+//
+//     ext::lz_segtr::tree<int64_t> segtree (
+//         n, 0, arr, [] (const int64_t &x, const int64_t &y) { return x + y;
+//         });
+//
+//     while (q--) {
+//         int query_type;
+//         scanf ("%d", &query_type);
+//
+//         int64_t a, b, x;
+//         switch (query_type) {
+//             case 1:
+//                 scanf ("%lld%lld%lld", &a, &b, &x);
+//                 segtree.add (a, b, x, 1, 1, n);
+//                 break;
+//             case 2:
+//                 scanf ("%lld%lld%lld", &a, &b, &x);
+//                 segtree.set (a, b, x, 1, 1, n);
+//                 break;
+//             case 3:
+//                 scanf ("%lld%lld", &a, &b);
+//                 printf ("%lld\n", segtree.query (a, b, 1, 1, n));
+//                 break;
+//         }
+//     }
+//
+//     return 0;
+// }

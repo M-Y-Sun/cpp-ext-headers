@@ -32,26 +32,26 @@ bfs (const std::vector<std::vector<int> > &adj, int start,
     std::cout << std::endl;
 }
 
-int
-main ()
-{
-    std::cout << "input nodes and edges, separated by a space\n> "
-              << std::flush;
-    int nodes, edges;
-    std::cin >> nodes >> edges;
-    std::cout << "input node connections, separated by a space\n";
-    std::vector<std::vector<int> > adj (nodes, std::vector<int> ());
-    for (int i = 0; i < edges; ++i) {
-        std::cout << "> " << std::flush;
-        int n1, n2;
-        std::cin >> n1 >> n2;
-        adj[n1].push_back (n2);
-        adj[n2].push_back (n1);
-    }
-
-    std::vector<bool> visited (nodes, false);
-    std::cout << "bfs from 0:\n";
-    bfs (adj, 0, &visited);
-
-    return 0;
-}
+// int
+// main ()
+// {
+//     std::cout << "input nodes and edges, separated by a space\n> "
+//               << std::flush;
+//     int nodes, edges;
+//     std::cin >> nodes >> edges;
+//     std::cout << "input node connections, separated by a space\n";
+//     std::vector<std::vector<int> > adj (nodes, std::vector<int> ());
+//     for (int i = 0; i < edges; ++i) {
+//         std::cout << "> " << std::flush;
+//         int n1, n2;
+//         std::cin >> n1 >> n2;
+//         adj[n1].push_back (n2);
+//         adj[n2].push_back (n1);
+//     }
+//
+//     std::vector<bool> visited (nodes, false);
+//     std::cout << "bfs from 0:\n";
+//     bfs (adj, 0, &visited);
+//
+//     return 0;
+// }

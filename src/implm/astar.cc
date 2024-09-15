@@ -28,7 +28,7 @@ std::vector<bool> visited_;
 /** Backtracks edges until the start node.
  * @return int64_the path to the end node. */
 std::vector<size_t>
-backtrack_ (node_t end)
+graph::backtrack_ (node_t end)
 {
     std::vector<size_t> path;
 
@@ -143,49 +143,50 @@ graph::astar (size_t start, size_t end, const std::vector<int64_t> &pdists)
 
 } // namespace ext
 
-int
-main ()
-{
-    int n, e;
-    std::cout << "enter number of nodes and edges, separated by a space:\n> "
-              << std::flush;
-    std::cin >> n >> e;
-
-    ext::ast::graph graph (n);
-
-    int start, end;
-    std::cout << "enter start and end, separated by a space:\n> "
-              << std::flush;
-    std::cin >> start >> end;
-
-    std::cout << "input distances to start, separated by a space:\n> "
-              << std::flush;
-    std::vector<int64_t> pdists (n, 0);
-    for (int i = 0; i < n; ++i)
-        std::cin >> pdists[i];
-
-    std::cout << "input nodes and weight, separated by a space:\n";
-    for (int i = 0; i < e; ++i) {
-        std::cout << "> " << std::flush;
-
-        int n1, n2, weight;
-        std::cin >> n1 >> n2 >> weight;
-        graph.add_edge_d (n1, n2, weight);
-    }
-
-    std::pair<int64_t, std::vector<size_t> > ans
-        = graph.astar (start, end, pdists);
-
-    std::cout << "\n--------\nweighted path length: " << ans.first << '\n';
-
-    std::cout << "path:\n";
-    for (size_t i = 0; i < ans.second.size (); ++i) {
-        std::cout << ans.second[i];
-        if (i < ans.second.size () - 1)
-            std::cout << " -> ";
-    }
-
-    std::cout << '\n';
-
-    return 0;
-}
+// int
+// main ()
+// {
+//     int n, e;
+//     std::cout << "enter number of nodes and edges, separated by a space:\n>
+//     "
+//               << std::flush;
+//     std::cin >> n >> e;
+//
+//     ext::ast::graph graph (n);
+//
+//     int start, end;
+//     std::cout << "enter start and end, separated by a space:\n> "
+//               << std::flush;
+//     std::cin >> start >> end;
+//
+//     std::cout << "input distances to start, separated by a space:\n> "
+//               << std::flush;
+//     std::vector<int64_t> pdists (n, 0);
+//     for (int i = 0; i < n; ++i)
+//         std::cin >> pdists[i];
+//
+//     std::cout << "input nodes and weight, separated by a space:\n";
+//     for (int i = 0; i < e; ++i) {
+//         std::cout << "> " << std::flush;
+//
+//         int n1, n2, weight;
+//         std::cin >> n1 >> n2 >> weight;
+//         graph.add_edge_d (n1, n2, weight);
+//     }
+//
+//     std::pair<int64_t, std::vector<size_t> > ans
+//         = graph.astar (start, end, pdists);
+//
+//     std::cout << "\n--------\nweighted path length: " << ans.first << '\n';
+//
+//     std::cout << "path:\n";
+//     for (size_t i = 0; i < ans.second.size (); ++i) {
+//         std::cout << ans.second[i];
+//         if (i < ans.second.size () - 1)
+//             std::cout << " -> ";
+//     }
+//
+//     std::cout << '\n';
+//
+//     return 0;
+// }

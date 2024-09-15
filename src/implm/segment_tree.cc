@@ -61,35 +61,36 @@ tree<T>::query (size_t start, size_t end)
 
 } // namespace ext
 
-int
-main ()
-{
-    int n, q;
-    scanf ("%d%d", &n, &q);
-
-    ext::segtr::tree<int64_t> segtree (
-        n, INT64_MAX,
-        [] (const int64_t &x, const int64_t &y) { return std::min (x, y); });
-
-    for (int i = 0; i < n; ++i) {
-        int64_t x;
-        scanf ("%lld", &x);
-        segtree.set (i, x);
-    }
-
-    while (q--) {
-        int     query_type, a;
-        int64_t b;
-
-        scanf ("%d%d%lld", &query_type, &a, &b);
-
-        --a;
-
-        if (query_type == 1)
-            segtree.set (a, b);
-        else
-            printf ("%lld\n", segtree.query (a, b));
-    }
-
-    return 0;
-}
+// int
+// main ()
+// {
+//     int n, q;
+//     scanf ("%d%d", &n, &q);
+//
+//     ext::segtr::tree<int64_t> segtree (
+//         n, INT64_MAX,
+//         [] (const int64_t &x, const int64_t &y) { return std::min (x, y);
+//         });
+//
+//     for (int i = 0; i < n; ++i) {
+//         int64_t x;
+//         scanf ("%lld", &x);
+//         segtree.set (i, x);
+//     }
+//
+//     while (q--) {
+//         int     query_type, a;
+//         int64_t b;
+//
+//         scanf ("%d%d%lld", &query_type, &a, &b);
+//
+//         --a;
+//
+//         if (query_type == 1)
+//             segtree.set (a, b);
+//         else
+//             printf ("%lld\n", segtree.query (a, b));
+//     }
+//
+//     return 0;
+// }

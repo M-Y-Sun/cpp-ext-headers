@@ -19,7 +19,7 @@ namespace ast
 std::vector<node_t> nodes_;
 
 // adjacency list representing the graph
-std::vector<std::vector<nbr_t> > adj_;
+std::vector<std::vector<edge_t> > adj_;
 
 // visited array
 std::vector<bool> visited_;
@@ -67,7 +67,7 @@ graph::setup_ (size_t start, const std::vector<int64_t> &pdists)
 }
 
 graph::graph (size_t len)
-    : nodes_ (len, node_t ()), adj_ (len, std::vector<nbr_t> ())
+    : nodes_ (len, node_t ()), adj_ (len, std::vector<edge_t> ())
 {
     reset_nodes_ ();
 }
@@ -116,13 +116,13 @@ graph::traverse (size_t start, size_t end, const std::vector<int64_t> &pdists)
         if (cur.wdist != nodes_[cur.id].wdist)
             continue;
 
-        for (nbr_t &next : adj_[cur.id]) {
+        for (edge_t &next : adj_[cur.id]) {
             int64_t wdistval = cur.wdist + next.weight;
 
-            if (next.node->wdist > wdistval) {
-                next.node->wdist = wdistval;
-                next.node->prev  = &nodes_[cur.id];
-                pq.push (*next.node);
+            if (next.dest->wdist > wdistval) {
+                next.dest->wdist = wdistval;
+                next.dest->prev  = &nodes_[cur.id];
+                pq.push (*next.dest);
             }
         }
     }

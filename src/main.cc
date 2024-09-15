@@ -90,7 +90,7 @@ main ()
 
     // ------ DIJKSTRA and ASTAR ------ //
 
-    std::cout << "------SHORTEST PATH------\n";
+    std::cout << "\n------SHORTEST PATH------\n";
     std::cout << "input number of nodes and edges, separated by a space\n> "
               << std::flush;
     std::cin >> nodes >> edges;
@@ -149,6 +149,34 @@ main ()
     }
 
     std::cout << '\n';
+
+    // ------ SEGMENT TREE ------ //
+
+    std::cout << "Enter array length:\n> " << std::flush;
+
+    int len;
+    std::cin >> len;
+
+    ext::segtr::tree<int64_t> segtree (
+        len, 0, [] (const int64_t &x, const int64_t &y) { return x + y; });
+
+    std::cout << "Enter array contents, separated by a space:\n";
+    for (int i = 0; i < len; ++i) {
+        std::cout << "> " << std::flush;
+
+        int64_t x;
+        std::cin >> x;
+        segtree.set (i, x);
+    }
+
+    std::cout << "Enter number of queries:\n> " << std::flush;
+
+    int queries;
+    std::cin >> queries;
+
+    while (queries--) {
+        // read query type
+    }
 
     return 0;
 }

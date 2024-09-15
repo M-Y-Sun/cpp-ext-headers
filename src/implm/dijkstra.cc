@@ -50,7 +50,7 @@ graph::setup_ (size_t start)
 }
 
 graph::graph (size_t len)
-    : nodes_ (len, node_t ()), adj_ (len, std::vector<nbr_t> ())
+    : nodes_ (len, node_t ()), adj_ (len, std::vector<edge_t> ())
 {
     reset_nodes_ ();
 }
@@ -112,21 +112,21 @@ graph::traverse (size_t start, size_t end)
 
         // queue each neighbor of the current node and update values if
         // needed
-        for (nbr_t &next : adj_[cur.id]) {
+        for (edge_t &next : adj_[cur.id]) {
             // new distance is cur distance + weight to next node
             int64_t distval = cur.dist + next.weight;
 
             // if distance is smaller, update the distance and previous
             // node
-            if (next.node->dist > distval) {
-                next.node->dist = distval;
+            if (next.dest->dist > distval) {
+                next.dest->dist = distval;
 
                 // we can directly assign addresses here because the place
-                // that adj and nodes points are passed as pointer
+                // that adj and dests points are passed as pointer
                 // parameters so they should exist even after the function
                 // returns
-                next.node->prev = &nodes_[cur.id];
-                pq.push (*next.node);
+                next.dest->prev = &nodes_[cur.id];
+                pq.push (*next.dest);
             }
         }
     }

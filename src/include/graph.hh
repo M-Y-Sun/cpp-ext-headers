@@ -26,9 +26,9 @@ struct node_t {
 };
 
 // node connection (for adjacency list)
-struct nbr_t {
+struct edge_t {
     int64_t weight;
-    node_t *node;
+    node_t *dest;
 };
 
 class graph final
@@ -37,7 +37,7 @@ class graph final
     std::vector<node_t> nodes_;
 
     // adjacency list representing the graph
-    std::vector<std::vector<nbr_t> > adj_;
+    std::vector<std::vector<edge_t> > adj_;
 
     // visited array
     std::vector<bool> visited_;
@@ -90,9 +90,9 @@ struct node_t {
 };
 
 // node connection (for adjacency list)
-struct nbr_t {
+struct edge_t {
     int64_t weight;
-    node_t *node;
+    node_t *dest;
 };
 
 class graph final
@@ -101,7 +101,7 @@ class graph final
     std::vector<node_t> nodes_;
 
     // adjacency list representing the graph
-    std::vector<std::vector<nbr_t> > adj_;
+    std::vector<std::vector<edge_t> > adj_;
 
     // visited array
     std::vector<bool> visited_;

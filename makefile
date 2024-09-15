@@ -1,4 +1,4 @@
-CC ?= clang++
+CC = clang++
 CFLAGS = -I./$(INCL) -g -Wall -Wextra -Wpedantic -std=c++20
 
 MAIN ?=  src/main.cc

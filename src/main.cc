@@ -2,8 +2,8 @@
 #include <queue>
 #include <vector>
 
-// #include "./include/graph.hh"
-// #include "./include/tree.hh"
+#include "./include/graph.hh"
+#include "./include/tree.hh"
 
 void
 bfs (const std::vector<std::vector<int> > &adj, int start,
@@ -54,6 +54,7 @@ int
 main ()
 {
     int nodes, edges;
+    std::cout << "------ DFS and BFS ------\n";
     std::cout << "input nodes and edges, separated by a space\n> "
               << std::flush;
     std::cin >> nodes >> edges;
@@ -70,14 +71,18 @@ main ()
         adj[n2].push_back (n1);
     }
 
+    int start;
+    std::cout << "input starting node\n> " << std::flush;
+    std::cin >> start;
+
     std::vector<bool> visited (nodes, false);
-    std::cout << "------DFS------\n";
-    dfs (adj, adj[0][0], &visited);
+    std::cout << "\n------DFS------\n";
+    dfs (adj, start, &visited);
     std::cout << std::endl;
 
     visited.assign (nodes, false);
-    std::cout << "\n\n------BFS------\n";
-    dfs (adj, adj[0][0], &visited);
+    std::cout << "\n------BFS------\n";
+    bfs (adj, start, &visited);
     std::cout << std::endl;
 
     return 0;

@@ -25,14 +25,14 @@ template <typename T> class tree final
     std::vector<T> tree_; // length of this is 2 * len
     size_t         len_;  // simulated "length" of the array
 
-    std::function<T (const T &, const T &)> queryfunc;
+    std::function<T (const T &, const T &)> combine_;
 
 public:
     tree (size_t len, const T dft,
-          std::function<T (const T &, const T &)> const &queryfunc);
+          std::function<T (const T &, const T &)> const &combine);
 
     /** Sets the value at id to val */
-    void set (int idx, T val);
+    void set (size_t idx, T val);
 
     /** @return A query of the range [start, end) */
     T query (size_t start, size_t end);
@@ -43,7 +43,10 @@ public:
 namespace lz_segtr
 {
 
-enum qtype_e { ADD, SET, NONE };
+// TODO(M-Y-Sun): Test multiplication
+enum treeop_e { SUM = 0, MIN = 1, MAX = 2 };
+
+enum qtype_e { ADD = 0, SET = 1, NONE = 2 };
 
 template <typename T> struct query_t {
     qtype_e type = NONE;
@@ -64,7 +67,8 @@ template <typename T> class tree final
     std::vector<query_t<T> > lazy_;
     size_t                   len_; // simulated "length" of the array
 
-    std::function<T (const T &, const T &)> queryfunc;
+    std::function<T (const T &, const T &)> combine_;
+    std::function<T (const T &, const T &)> upd_upstream_;
 
     T next_p2_ (T v);
 
@@ -82,11 +86,10 @@ template <typename T> class tree final
     T query_ (size_t start, size_t end, size_t pos_, size_t lb_, size_t rb_);
 
 public:
-    tree (size_t len, T dft, std::vector<T> arr,
-          std::function<T (const T &, const T &)> const &queryfunc);
+    tree (size_t len, T dft, std::vector<T> arr, treeop_e type);
 
     /** Adds a value to a range of elements. */
-    void upd (size_t start, size_t end, const query_t<T> &q);
+    void upd (size_t start, size_t end, T val, qtype_e qtype);
 
     /** @return Queries the range [start, end) recursively with O(log n) time
      * complexity.*/

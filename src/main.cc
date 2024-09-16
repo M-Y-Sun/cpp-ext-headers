@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <iostream>
 #include <queue>
 #include <vector>
@@ -148,35 +149,135 @@ main ()
             std::cout << " -> ";
     }
 
-    std::cout << '\n';
+    std::cout << '\n' << std::endl;
 
     // ------ SEGMENT TREE ------ //
 
-    std::cout << "Enter array length:\n> " << std::flush;
-
-    int len;
+    std::cout << "------SEGMENT TREE------\n"
+                 "Enter array length:\n> "
+              << std::flush;
+    size_t len;
     std::cin >> len;
 
     ext::segtr::tree<int64_t> segtree (
         len, 0, [] (const int64_t &x, const int64_t &y) { return x + y; });
 
-    std::cout << "Enter array contents, separated by a space:\n";
-    for (int i = 0; i < len; ++i) {
-        std::cout << "> " << std::flush;
-
+    std::cout << "Enter array contents, separated by a space:\n> ";
+    for (size_t i = 0; i < len; ++i) {
         int64_t x;
         std::cin >> x;
         segtree.set (i, x);
     }
 
     std::cout << "Enter number of queries:\n> " << std::flush;
-
     int queries;
     std::cin >> queries;
 
     while (queries--) {
-        // read query type
+        std::cout << "\nEnter the type of query from the following options:\n"
+                     "\t0: SET\n"
+                     "\t1: QUERY\n"
+                     "> "
+                  << std::flush;
+        int qtype;
+        std::cin >> qtype;
+
+        switch (qtype) {
+            case 0:
+                size_t  pos;
+                int64_t val;
+                std::cout
+                    << "Enter position and value, separated by a space:\n> "
+                    << std::flush;
+                std::cin >> pos >> val;
+
+                // segtree is zero indexed so we decrement
+                segtree.set (--pos, val);
+
+                break;
+
+            case 1:
+                size_t l, r;
+                std::cout << "Enter lower and upper bounds, separated by a "
+                             "space:\n> "
+                          << std::flush;
+                std::cin >> l >> r;
+
+                std::cout << segtree.query (--l, r) << std::endl;
+
+                break;
+
+            default:
+                std::cerr << "\033[31;1mfatal:\033[0m Invalid query type. "
+                             "Continuing to next query."
+                          << std::endl;
+                break;
+        }
     }
+
+    std::cout << "\n------LAZY PROPAGATION SEGMENT TREE------\n"
+                 "Enter tree type from the following options:\n"
+                 "\t0: SUM\n"
+                 "\t1: MIN\n"
+                 "\t2: MAX\n"
+                 "> "
+              << std::flush;
+    int trtype;
+    std::cin >> trtype;
+
+    if (trtype >= 0 && trtype <= 2) {
+
+        std::cout << "Enter array length:\n> " << std::flush;
+        std::cin >> len;
+
+        std::cout << "Enter array contents, separated by a space:\n> ";
+        std::vector<int64_t> vals (len, 0);
+        for (size_t i = 0; i < len; ++i)
+            std::cin >> vals[i];
+
+        ext::lz_segtr::tree<int64_t> lz_segtree (
+            len, 0, vals, (ext::lz_segtr::treeop_e)trtype);
+
+        std::cout << "Enter number of queries:\n> " << std::flush;
+        std::cin >> queries;
+
+        while (queries--) {
+            std::cout
+                << "\nEnter the type of query from the following options:\n"
+                   "\t0: ADD\n"
+                   "\t1: SET\n"
+                   "\t2: QUERY\n"
+                   "> "
+                << std::flush;
+            int qtype;
+            std::cin >> qtype;
+
+            if (qtype == 0 || qtype == 1) {
+                std::cout << "Enter lower and upper bounds and the value, "
+                             "separated by a space:\n> "
+                          << std::flush;
+                size_t  l, r;
+                int64_t val;
+                std::cin >> l >> r >> val;
+
+                // the segtree is ZERO INDEXED, so we decrement the bounds
+                lz_segtree.upd (--l, --r, val, (ext::lz_segtr::qtype_e)qtype);
+            } else if (qtype == 2) {
+                std::cout << "Enter lower and upper bounds, separated by a "
+                             "space:\n> "
+                          << std::flush;
+                size_t l, r;
+                std::cin >> l >> r;
+
+                std::cout << lz_segtree.query (--l, --r) << std::endl;
+            }
+        }
+    } else {
+        std::cerr << "\033[31;1mfatal:\033[0m Invalid tree type. Skipping."
+                  << std::endl;
+    }
+
+    std::cout << "\n------END------\n" << std::endl;
 
     return 0;
 }

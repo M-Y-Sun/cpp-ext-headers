@@ -15,22 +15,22 @@ namespace segtr
 
 template <typename T>
 tree<T>::tree (size_t len, const T dft,
-               std::function<T (const T &, const T &)> const &queryfunc)
-    : DEFAULT_ (dft), tree_ (len << 1, dft), len_ (len), queryfunc (queryfunc)
+               std::function<T (const T &, const T &)> const &combine)
+    : DEFAULT_ (dft), tree_ (len << 1, dft), len_ (len), combine_ (combine)
 {
 }
 
 /** Sets the value at id to val */
 template <typename T>
 void
-tree<T>::set (int idx, T val)
+tree<T>::set (size_t idx, T val)
 {
     idx += len_;
     tree_[idx] = val;
 
     // start at the bottom of the tree and update nodes until root
     for (; idx > 1; idx >>= 1)
-        tree_[idx >> 1] = queryfunc (tree_[idx], tree_[idx ^ 1]);
+        tree_[idx >> 1] = combine_ (tree_[idx], tree_[idx ^ 1]);
 }
 
 /** @return A query of the range [start, end) */
@@ -46,51 +46,22 @@ tree<T>::query (size_t start, size_t end)
         // if it is left child => not part of the [start, end] range, it
         // should be processed
         if (start & 1)
-            ans = queryfunc (ans, tree_[start++]);
+            ans = combine_ (ans, tree_[start++]);
 
         // if it is left child => part of the [start, end] range, the right
         // child (previous index) should be processed
         if (end & 1)
-            ans = queryfunc (ans, tree_[--end]);
+            ans = combine_ (ans, tree_[--end]);
     }
 
     return ans;
 }
 
+template class tree<int32_t>;
+template class tree<int64_t>;
+template class tree<uint32_t>;
+template class tree<uint64_t>;
+
 } // namespace segtr
 
 } // namespace ext
-
-// int
-// main ()
-// {
-//     int n, q;
-//     scanf ("%d%d", &n, &q);
-//
-//     ext::segtr::tree<int64_t> segtree (
-//         n, INT64_MAX,
-//         [] (const int64_t &x, const int64_t &y) { return std::min (x, y);
-//         });
-//
-//     for (int i = 0; i < n; ++i) {
-//         int64_t x;
-//         scanf ("%lld", &x);
-//         segtree.set (i, x);
-//     }
-//
-//     while (q--) {
-//         int     query_type, a;
-//         int64_t b;
-//
-//         scanf ("%d%d%lld", &query_type, &a, &b);
-//
-//         --a;
-//
-//         if (query_type == 1)
-//             segtree.set (a, b);
-//         else
-//             printf ("%lld\n", segtree.query (a, b));
-//     }
-//
-//     return 0;
-// }

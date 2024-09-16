@@ -1,7 +1,7 @@
 // https://usaco.guide/plat/RURQ?lang=cpp
 // based on problem cses 1735: https://cses.fi/problemset/task/1735/
 
-#include <functional>
+#include <algorithm>
 #include <vector>
 
 #include "../include/tree.hh"
@@ -23,7 +23,7 @@ template <typename T>
 inline void
 tree<T>::pushup_ (size_t pos)
 {
-    tree_[pos] = queryfunc (tree_[pos << 1], tree_[(pos << 1) + 1]);
+    tree_[pos] = combine_ (tree_[pos << 1], tree_[(pos << 1) + 1]);
 }
 
 template <typename T>
@@ -31,14 +31,20 @@ void
 tree<T>::apply_ (size_t pos, size_t len, const query_t<T> &q)
 {
     if (q.type == ADD) {
-        if (lazy_[pos].type != SET) {
+        if (lazy_[pos].type != SET)
             lazy_[pos] = query_t<T>{ ADD, lazy_[pos].val + q.val };
-        } else {
+        else
             lazy_[pos] = query_t<T>{ SET, lazy_[pos].val + q.val };
-        }
-        tree_[pos] += q.val * len;
+
+        // SUM: += q.val * len
+        // MIN: += q.val
+        // MAX: += q.val
+        tree_[pos] += upd_upstream_ (q.val, len);
     } else if (q.type == SET) {
-        tree_[pos] = q.val * len;
+        // SUM: = q.val * len
+        // MIN: = q.val
+        // MAX: = q.val
+        tree_[pos] = upd_upstream_ (q.val, len);
         lazy_[pos] = q;
     }
 }
@@ -76,11 +82,26 @@ tree<T>::build_ (size_t pos, size_t lb, size_t rb, const std::vector<T> &arr)
 }
 
 template <typename T>
-tree<T>::tree (size_t len, T dft, std::vector<T> arr,
-               std::function<T (const T &, const T &)> const &queryfunc)
+tree<T>::tree (size_t len, T dft, std::vector<T> arr, treeop_e type)
     : DEFAULT_ (dft), tree_ (next_p2_ (len) << 1, dft),
-      lazy_ (next_p2_ (len), query_t<T> ()), len_ (len), queryfunc (queryfunc)
+      lazy_ (next_p2_ (len), query_t<T> ()), len_ (len)
 {
+    switch (type) {
+        case SUM:
+            combine_ = [] (const T &x, const T &y) { return x + y; };
+            upd_upstream_
+                = [] (const T &val, const T &len) { return val * len; };
+            break;
+        case MIN:
+            combine_ = [] (const T &x, const T &y) { return std::min (x, y); };
+            upd_upstream_ = [] (const T &val, const T &len) { return val; };
+            break;
+        case MAX:
+            combine_ = [] (const T &x, const T &y) { return std::max (x, y); };
+            upd_upstream_ = [] (const T &val, const T &len) { return val; };
+            break;
+    }
+
     build_ (1, 0, len - 1, arr);
 }
 
@@ -137,15 +158,15 @@ tree<T>::query_ (size_t start, size_t end, size_t pos_, size_t l_, size_t r_)
     size_t lc = pos_ << 1;
 
     // search the left and right half
-    return queryfunc (query_ (start, end, lc, l_, mid),
-                      query_ (start, end, lc + 1, mid + 1, r_));
+    return combine_ (query_ (start, end, lc, l_, mid),
+                     query_ (start, end, lc + 1, mid + 1, r_));
 }
 
 template <typename T>
 inline void
-tree<T>::upd (size_t start, size_t end, const query_t<T> &q)
+tree<T>::upd (size_t start, size_t end, T val, qtype_e qtype)
 {
-    upd_ (start, end, q, 1, 0, len_ - 1);
+    upd_ (start, end, query_t<T>{ qtype, val }, 1, 0, len_ - 1);
 }
 
 template <typename T>
@@ -154,6 +175,11 @@ tree<T>::query (size_t start, size_t end)
 {
     return query_ (start, end, 1, 0, len_ - 1);
 }
+
+template class tree<int32_t>;
+template class tree<int64_t>;
+template class tree<uint32_t>;
+template class tree<uint64_t>;
 
 } // namespace lz_segtr
 
@@ -168,9 +194,8 @@ tree<T>::query (size_t start, size_t end)
 //     for (int64_t &i : arr)
 //         scanf ("%lld", &i);
 //
-//     ext::lz_segtr::tree<int64_t> segtree (
-//         n, 0, arr,
-//         [] (const int64_t &lhs, const int64_t &rhs) { return lhs + rhs; });
+//     ext::lz_segtr::tree<int64_t> segtree (n, 0, arr,
+//                                           ext::lz_segtr::treeop_e::SUM);
 //
 //     while (q--) {
 //         int type, a, b;

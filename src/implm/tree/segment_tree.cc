@@ -5,7 +5,7 @@
 #include <cstdio>
 #include <functional>
 
-#include "../include/tree.hh"
+#include "../../include/tree.hh"
 
 namespace ext
 {

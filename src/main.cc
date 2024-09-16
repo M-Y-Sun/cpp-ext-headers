@@ -1,10 +1,27 @@
-#include <cstdlib>
 #include <iostream>
 #include <queue>
+#include <string>
 #include <vector>
 
 #include "./include/graph.hh"
+#include "./include/misc.hh"
 #include "./include/tree.hh"
+
+static void
+print_divider_ (std::string str)
+{
+    int term_rows, term_cols;
+    get_winsz (&term_rows, &term_cols);
+
+    int len = str.length ();
+
+    std::cout << '\n'
+              << std::string ((term_cols >> 1) - (len >> 1), '-') << str
+              << std::string (
+                     term_cols - (term_cols >> 1) - (len - (len >> 1)), '-')
+              << '\n'
+              << std::endl;
+}
 
 void
 bfs (const std::vector<std::vector<int> > &adj, int start,
@@ -54,6 +71,8 @@ dfs (const std::vector<std::vector<int> > &adj, int node,
 int
 main ()
 {
+    print_divider_ ("USAGE DEMONSTRATION");
+
     int nodes, edges;
 
     // ------ DFS and BFS ------ //
@@ -277,7 +296,7 @@ main ()
                   << std::endl;
     }
 
-    std::cout << "\n------END------\n" << std::endl;
+    print_divider_ ("END");
 
     return 0;
 }

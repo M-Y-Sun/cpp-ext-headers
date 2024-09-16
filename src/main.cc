@@ -8,7 +8,7 @@
 #include "./include/tree.hh"
 
 static void
-print_divider_ (std::string str)
+print_divider_ (std::string str, char c = '-')
 {
     int term_rows, term_cols;
     get_winsz (&term_rows, &term_cols);
@@ -16,9 +16,9 @@ print_divider_ (std::string str)
     int len = str.length ();
 
     std::cout << '\n'
-              << std::string ((term_cols >> 1) - (len >> 1), '-') << str
+              << std::string ((term_cols >> 1) - (len >> 1), c) << str
               << std::string (
-                     term_cols - (term_cols >> 1) - (len - (len >> 1)), '-')
+                     term_cols - (term_cols >> 1) - (len - (len >> 1)), c)
               << '\n'
               << std::endl;
 }
@@ -71,13 +71,14 @@ dfs (const std::vector<std::vector<int> > &adj, int node,
 int
 main ()
 {
-    print_divider_ ("USAGE DEMONSTRATION");
+    print_divider_ ("USAGE DEMONSTRATION", '=');
 
     int nodes, edges;
 
     // ------ DFS and BFS ------ //
 
-    std::cout << "------DFS and BFS------\n";
+    print_divider_ ("DFS and BFS");
+
     std::cout << "input number of nodes and edges, separated by a space\n> "
               << std::flush;
     std::cin >> nodes >> edges;
@@ -110,7 +111,8 @@ main ()
 
     // ------ DIJKSTRA and ASTAR ------ //
 
-    std::cout << "\n------SHORTEST PATH------\n";
+    print_divider_ ("SHORTEST PATH");
+
     std::cout << "input number of nodes and edges, separated by a space\n> "
               << std::flush;
     std::cin >> nodes >> edges;
@@ -146,8 +148,9 @@ main ()
     std::pair<int64_t, std::vector<size_t> > ans
         = djk_graph.traverse (start, end);
 
-    std::cout << "\n------DIJKSTRA------\nWeighted path length: " << ans.first
-              << '\n';
+    print_divider_ ("DIJKSTRA");
+
+    std::cout << "Weighted path length: " << ans.first << '\n';
 
     std::cout << "Path:\n";
     for (size_t i = 0; i < ans.second.size (); ++i) {
@@ -158,8 +161,9 @@ main ()
 
     ans = ast_graph.traverse (start, end, pdists);
 
-    std::cout << "\n------ASTAR------\nWeighted path length: " << ans.first
-              << '\n';
+    print_divider_ ("ASTAR");
+
+    std::cout << "Weighted path length: " << ans.first << '\n';
 
     std::cout << "path:\n";
     for (size_t i = 0; i < ans.second.size (); ++i) {
@@ -172,9 +176,9 @@ main ()
 
     // ------ SEGMENT TREE ------ //
 
-    std::cout << "------SEGMENT TREE------\n"
-                 "Enter array length:\n> "
-              << std::flush;
+    print_divider_ ("SEGMENT TREE");
+
+    std::cout << "Enter array length:\n> " << std::flush;
     size_t len;
     std::cin >> len;
 
@@ -234,8 +238,9 @@ main ()
         }
     }
 
-    std::cout << "\n------LAZY PROPAGATION SEGMENT TREE------\n"
-                 "Enter tree type from the following options:\n"
+    print_divider_ ("LAZY PROPAGATION SEGMENT TREE");
+
+    std::cout << "Enter tree type from the following options:\n"
                  "\t0: SUM\n"
                  "\t1: MIN\n"
                  "\t2: MAX\n"
@@ -296,7 +301,7 @@ main ()
                   << std::endl;
     }
 
-    print_divider_ ("END");
+    print_divider_ ("END", '=');
 
     return 0;
 }

@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <cstdio>
 #include <functional>
 #include <limits>
 #include <vector>
@@ -68,13 +67,10 @@ lis (const std::vector<T> &arr, const sqtype_e &sqtype)
         }
     }
 
-    T   ans = 0;
     int pos = -1;
     for (size_t l = 0; l <= SZ; ++l) {
-        if (d[l] != DFT) {
-            ans = l;
+        if (d[l] != DFT)
             pos = idxs[l];
-        }
     }
 
     std::vector<T> &subseq = d; // use the memory allocated by d

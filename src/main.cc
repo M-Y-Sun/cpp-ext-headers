@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include "./include/array.hh"
 #include "./include/graph.hh"
 #include "./include/misc.hh"
 #include "./include/tree.hh"
@@ -73,9 +74,69 @@ main ()
 {
     print_divider_ ("USAGE DEMONSTRATION", '=');
 
-    int nodes, edges;
+    // ------ LONGEST INCR/DECR/NICR/NDCR SUBSEQUENCE ------ //
+
+    print_divider_ ("LIS");
+
+    std::cout
+        << "\nEnter the type of subsequence from the following options:\n"
+           "\t0: INCREASING\n"
+           "\t1: DECREASING\n"
+           "\t2: NONDECREASING\n"
+           "\t3: NONINCREASING\n"
+           "> "
+        << std::flush;
+
+    int seqtype;
+    std::cin >> seqtype;
+
+    ext::arr::sqtype_e sqtype;
+    bool               valid = true;
+
+    switch (seqtype) {
+        case 0:
+            sqtype = ext::arr::INCR;
+            break;
+        case 1:
+            sqtype = ext::arr::DECR;
+            break;
+        case 2:
+            sqtype = ext::arr::NDCR;
+            break;
+        case 3:
+            sqtype = ext::arr::NICR;
+            break;
+        default:
+            std::cerr << "\033[31;1mfatal:\033[0m Invalid query type. "
+                         "Continuing to next query."
+                      << std::endl;
+            valid = false;
+            break;
+    }
+
+    if (valid) {
+        std::cout << "Enter length of array:\n> " << std::flush;
+        size_t len;
+        std::cin >> len;
+
+        std::vector<int> arr (len, 0);
+
+        std::cout << "Enter array contents, separated by spaces:\n> "
+                  << std::flush;
+
+        for (size_t i = 0; i < len; ++i)
+            std::cin >> arr[i];
+
+        std::vector<int> lis = ext::arr::lis<int> (arr, sqtype);
+
+        for (const int &num : lis)
+            std::cout << num << ' ';
+        std::cout << '\n';
+    }
 
     // ------ DFS and BFS ------ //
+
+    int nodes, edges;
 
     print_divider_ ("DFS and BFS");
 
@@ -185,7 +246,7 @@ main ()
     ext::segtr::tree<int64_t> segtree (
         len, 0, [] (const int64_t &x, const int64_t &y) { return x + y; });
 
-    std::cout << "Enter array contents, separated by a space:\n> ";
+    std::cout << "Enter array contents, separated by spaces:\n> ";
     for (size_t i = 0; i < len; ++i) {
         int64_t x;
         std::cin >> x;
@@ -254,7 +315,7 @@ main ()
         std::cout << "Enter array length:\n> " << std::flush;
         std::cin >> len;
 
-        std::cout << "Enter array contents, separated by a space:\n> ";
+        std::cout << "Enter array contents, separated by spaces:\n> ";
         std::vector<int64_t> vals (len, 0);
         for (size_t i = 0; i < len; ++i)
             std::cin >> vals[i];

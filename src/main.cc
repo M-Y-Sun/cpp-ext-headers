@@ -76,7 +76,7 @@ main ()
 
     // ------ LONGEST INCR/DECR/NICR/NDCR SUBSEQUENCE ------ //
 
-    print_divider_ ("LIS");
+    print_divider_ ("LONGEST INCREASING SUBSEQUENCE");
 
     std::cout
         << "\nEnter the type of subsequence from the following options:\n"
@@ -132,6 +132,10 @@ main ()
         for (const int &num : lis)
             std::cout << num << ' ';
         std::cout << '\n';
+
+        if (len < 1024)
+            std::cout << "Number of LIS: " << ext::arr::cnt_lis (arr)
+                      << std::endl;
     }
 
     // ------ DFS and BFS ------ //

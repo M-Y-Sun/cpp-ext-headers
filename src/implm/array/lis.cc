@@ -11,7 +11,7 @@ namespace ext
 namespace arr
 {
 
-/** @return returns the longest increasing subsequence in the array */
+/** @return the longest increasing subsequence in the array in O(NlogN) */
 template <typename T>
 std::vector<T>
 lis (const std::vector<T> &arr, const sqtype_e &sqtype)
@@ -86,6 +86,47 @@ lis (const std::vector<T> &arr, const sqtype_e &sqtype)
     return subseq;
 }
 
+/** @return the number of distinct LIS in O(N^2)*/
+template <typename T>
+T
+cnt_lis (const std::vector<T> &arr)
+{
+    const size_t SZ = arr.size ();
+
+    // d[i] is the length of the longest increasing subsequence that ends in
+    // the element at index i;
+    std::vector<T> d (SZ, 1); // initialize to length 1 to begin
+    std::vector<T> cnt (SZ, 1);
+
+    for (size_t i = 0; i < SZ; ++i) {
+        for (size_t j = 0; j < i; ++j) {
+            if (arr[j] < arr[i]) {
+                T newlen = d[j] + 1;
+
+                if (d[i] == newlen) {
+                    cnt[i] = cnt[i] + cnt[j];
+                } else if (d[i] < newlen) {
+                    d[i]   = newlen;
+                    cnt[i] = cnt[j];
+                }
+            }
+        }
+    }
+
+    T maxlen = d[0];
+    T ans    = cnt[0];
+    for (size_t i = 1; i < SZ; ++i) {
+        if (maxlen == d[i]) {
+            ans = ans + cnt[i];
+        } else if (maxlen < d[i]) {
+            maxlen = d[i];
+            ans    = cnt[i];
+        }
+    }
+
+    return ans;
+}
+
 template std::vector<int8_t>  lis (const std::vector<int8_t> &arr,
                                    const sqtype_e            &sqtype);
 template std::vector<int16_t> lis (const std::vector<int16_t> &arr,
@@ -94,6 +135,11 @@ template std::vector<int32_t> lis (const std::vector<int32_t> &arr,
                                    const sqtype_e             &sqtype);
 template std::vector<int64_t> lis (const std::vector<int64_t> &arr,
                                    const sqtype_e             &sqtype);
+
+template int8_t  cnt_lis (const std::vector<int8_t> &arr);
+template int16_t cnt_lis (const std::vector<int16_t> &arr);
+template int32_t cnt_lis (const std::vector<int32_t> &arr);
+template int64_t cnt_lis (const std::vector<int64_t> &arr);
 
 } // namespace arr
 

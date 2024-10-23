@@ -13,10 +13,16 @@ namespace lz_segtr
 {
 
 template <typename T>
-inline T
+T
 tree<T>::next_p2_ (T x)
 {
-    return x == 1 ? 1 : 1 << (sizeof (T) - __builtin_clzl (x - 1));
+    if (x == 1)
+        return 1;
+
+    if (sizeof (T) <= 32)
+        return 1 << (sizeof (T) - __builtin_clzl (x - 1));
+    else
+        return 1 << (sizeof (T) - __builtin_clzll (x - 1));
 }
 
 template <typename T>

@@ -129,9 +129,12 @@ main ()
 
         std::vector<int> lis = ext::arr::lis<int> (arr, sqtype);
 
+        std::cout << "LIS: ";
         for (const int &num : lis)
             std::cout << num << ' ';
         std::cout << '\n';
+
+        std::cout << "Length of LIS: " << lis.size () << '\n';
 
         if (len < 1024)
             std::cout << "Number of LIS: " << ext::arr::cnt_lis (arr)

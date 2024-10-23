@@ -5,13 +5,12 @@ void
 dfs (const std::vector<std::vector<int> > &adj, int node,
      std::vector<bool> *visited)
 {
-    if ((*visited)[node])
-        return;
-    (*visited)[node] = 1;
+    (*visited)[node] = true;
 
     // do something with node
     std::cout << node << " ";
 
     for (auto neighbor : adj[node])
-        dfs (adj, neighbor, visited);
+        if (!(*visited)[node])
+            dfs (adj, neighbor, visited);
 }

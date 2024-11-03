@@ -3,7 +3,7 @@
 #include <limits>
 #include <vector>
 
-#include "../../include/array.hh"
+#include "array.hh"
 
 namespace ext
 {

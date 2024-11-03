@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <vector>
 
-#include "../../include/tree.hh"
+#include "tree.hh"
 
 namespace ext
 {

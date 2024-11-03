@@ -1,4 +1,4 @@
-#include "../../include/misc.hh"
+#include "misc.hh"
 
 namespace ext
 {

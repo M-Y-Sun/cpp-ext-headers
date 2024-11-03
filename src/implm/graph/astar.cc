@@ -7,7 +7,7 @@
 #include <utility>
 #include <vector>
 
-#include "../../include/graph.hh"
+#include "graph.hh"
 
 namespace ext
 {

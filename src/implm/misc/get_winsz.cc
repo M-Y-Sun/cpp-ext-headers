@@ -2,6 +2,9 @@
 
 #include "../../include/misc.hh"
 
+namespace ext
+{
+
 #if defined(_WIN32)
 #define WIN32_LEAN_AND_MEAN
 #define VC_EXTRALEAN
@@ -25,3 +28,5 @@ get_winsz (int *rows, int *cols)
     *cols = (int)(w.ws_col);
 #endif
 }
+
+} // namespace ext

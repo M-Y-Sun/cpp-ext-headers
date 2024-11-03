@@ -12,7 +12,7 @@ static void
 print_divider_ (std::string str, char c = '-')
 {
     int term_rows, term_cols;
-    get_winsz (&term_rows, &term_cols);
+    ext::get_winsz (&term_rows, &term_cols);
 
     int len = str.length ();
 

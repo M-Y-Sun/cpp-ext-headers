@@ -30,3 +30,4 @@
 *.elf.dSYM
 
 copy
+.cache

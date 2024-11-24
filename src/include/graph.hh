@@ -137,4 +137,39 @@ public:
 
 } // namespace ast
 
+namespace dsu
+{
+
+template <typename T> class disjoint_set final
+{
+private:
+    std::vector<T>      parents_;
+    std::vector<size_t> sizes_;
+
+public:
+    disjoint_set (size_t sz);
+
+    /**
+     * Recursively finds the representative node of x's component, visiting the
+     * immediate parent every iteration.
+     *
+     * Optimized by path compression to reduce tree height by raising the
+     * parent on each iteration of find.
+     *
+     * @return The representative node in x's component.
+     * */
+    T find (T x);
+
+    /**
+     * Merges two components optimized with union by size to work in O(log N).
+     * @return If the merge changed connectivity.
+     */
+    bool unite (T x, T y);
+
+    /** @return If x and y are in the same connected component */
+    bool connected (T x, T y);
+};
+
+} // namespace dsu
+
 } // namespace ext

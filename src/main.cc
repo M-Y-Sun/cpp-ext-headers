@@ -306,6 +306,8 @@ main ()
         }
     }
 
+    // ------ LAZY PROPAGATION SEGMENT TREE ------ //
+
     print_divider_ ("LAZY PROPAGATION SEGMENT TREE");
 
     std::cout << "Enter tree type from the following options:\n"
@@ -318,7 +320,6 @@ main ()
     std::cin >> trtype;
 
     if (trtype >= 0 && trtype <= 2) {
-
         std::cout << "Enter array length:\n> " << std::flush;
         std::cin >> len;
 
@@ -367,6 +368,36 @@ main ()
     } else {
         std::cerr << "\033[31;1mfatal:\033[0m Invalid tree type. Skipping."
                   << std::endl;
+    }
+
+    // ------ DISJOINT SET UNION (DSU) ------ //
+
+    print_divider_ ("DISJOINT SET UNION");
+
+    std::cout << "Enter the number of nodes:\n> " << std::flush;
+    std::cin >> nodes;
+    std::cout << "\nEnter the number of queries:\n> " << std::flush;
+    std::cin >> queries;
+
+    ext::dsu::disjoint_set<int> dsu (nodes);
+
+    for (int i = 0; i < queries; ++i) {
+        std::cout << "Enter the type of query from the following options:\n"
+                     "\t0: ADD\n"
+                     "\t1: CHECK\n"
+                     "> "
+                  << std::flush;
+        int qtype;
+        std::cin >> qtype;
+
+        std::cout << "Enter the vertices, separated by a space:\n> "
+                  << std::flush;
+        int u, v;
+        std::cin >> u >> v;
+        if (qtype == 0)
+            dsu.unite (u, v);
+        else
+            std::cout << (dsu.connected (u, v) ? "true" : "false") << '\n';
     }
 
     print_divider_ ("END", '=');

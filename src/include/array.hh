@@ -1,4 +1,6 @@
 #pragma once
+#ifndef ARRAY_HH
+#define ARRAY_HH
 
 #include <vector>
 
@@ -18,3 +20,5 @@ template <typename T> T cnt_lis (const std::vector<T> &arr);
 } // namespace arr
 
 } // namespace ext
+
+#endif

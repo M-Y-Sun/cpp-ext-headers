@@ -1,4 +1,6 @@
 #pragma once
+#ifndef TREE_HH
+#define TREE_HH
 
 #include <cstdio>
 #include <functional>
@@ -98,3 +100,5 @@ public:
 } // namespace lz_segtr
 
 } // namespace ext
+
+#endif

@@ -1,6 +1,7 @@
 #pragma once
+#ifndef GRAPH_HH
+#define GRAPH_HH
 
-#include <cstddef>
 #include <utility>
 #include <vector>
 
@@ -173,3 +174,5 @@ public:
 } // namespace dsu
 
 } // namespace ext
+
+#endif

@@ -1,6 +1,6 @@
 #include <numeric>
 
-#include "numeric.hh"
+#include "util.hh"
 
 ext::rational_number
 ext::rational_number::operator+ (const rational_number &other) const

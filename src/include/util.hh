@@ -1,6 +1,6 @@
 #pragma once
-#ifndef NUMERIC_HH
-#define NUMERIC_HH
+#ifndef UTIL_HH
+#define UTIL_HH
 
 #include <cstdint>
 

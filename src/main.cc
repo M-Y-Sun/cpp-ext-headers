@@ -7,6 +7,7 @@
 #include "./include/graph.hh"
 #include "./include/misc.hh"
 #include "./include/tree.hh"
+#include "./include/util.hh"
 
 static void
 print_divider_ (std::string str, char c = '-')

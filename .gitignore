@@ -29,6 +29,5 @@
 *.elf
 *.elf.dSYM
 
-copy
 .cache
 compile_commands.json

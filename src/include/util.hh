@@ -7,7 +7,7 @@
 namespace ext
 {
 
-template <typename int64_t> int64_t next_p2 (int64_t x);
+template <typename T> T next_p2 (T x);
 
 class rational_number
 {

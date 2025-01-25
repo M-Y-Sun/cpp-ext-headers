@@ -1,9 +1,8 @@
-namespace ext
-{
+#include "util.hh"
 
 template <typename T>
 T
-next_p2 (T x)
+ext::utl::next_p2 (T x)
 {
     if (x == 1)
         return 1;
@@ -13,5 +12,3 @@ next_p2 (T x)
     else
         return 1 << (sizeof (T) - __builtin_clzll (x - 1));
 }
-
-} // namespace ext

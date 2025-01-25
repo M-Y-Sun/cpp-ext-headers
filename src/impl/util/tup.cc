@@ -3,6 +3,9 @@
 namespace ext
 {
 
+namespace utl
+{
+
 template <typename T1, typename T2, typename T3>
 tup<T1, T2, T3>::tup () = default;
 
@@ -34,5 +37,7 @@ tup<T1, T2, T3>::third ()
 {
     return c_.second.second;
 }
+
+} // namespace utl
 
 } // namespace ext

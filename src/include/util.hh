@@ -8,6 +8,9 @@
 namespace ext
 {
 
+namespace utl
+{
+
 template <typename T> T next_p2 (T x);
 
 class rational_number
@@ -39,6 +42,30 @@ public:
     T2 &second ();
     T3 &third ();
 };
+
+struct point_t {
+    int64_t x;
+    int64_t y;
+
+    bool operator< (const point_t &other);
+};
+
+struct vec_t {
+    int64_t x;
+    int64_t y;
+
+    vec_t operator+ (const vec_t &other);
+
+    vec_t operator- (const vec_t &other);
+
+    vec_t operator* (const int64_t &scl);
+
+    bool operator< (const vec_t &other);
+};
+
+bool intersects (point_t a, point_t b, point_t c, point_t d);
+
+} // namespace utl
 
 } // namespace ext
 

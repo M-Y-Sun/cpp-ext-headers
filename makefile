@@ -1,31 +1,46 @@
 CC = clang++
 CXXFLAGS = -I./$(INCL) -g -Wall -Wextra -Wpedantic -std=c++20
+OFLAG ?= O1
 
-MAIN ?=  src/main.cc
-SRC_DIR = src/impl
-SRC_FILES := $$(find $(SRC_DIR) -name '*.cc' | xargs)
+FILE = main
+MAIN ?=  src/$(FILE).cc
+BIN = $(FILE).elf
+
+IMPL_DIR = src/impl
+IMPL_FILES := $$(find $(IMPL_DIR) -name '*.cc' | xargs)
 INCL := src/include/
-BIN ?= bin/main.elf
+
+MKDIRS = /bin/bash -c 'if [ ! -d bin/ ]; then mkdir bin/; fi; if [ ! -d dbg/ ]; then mkdir dbg/; fi'
+REPLACE_FILES = /bin/bash -c 'if [ -d dbg/$(BIN).dSYM/ ]; then rm -r dbg/$(BIN).dSYM/; fi; if [ -d bin/$(BIN).dSYM/ ]; then mv bin/$(BIN).dSYM/ dbg//; fi'
+
+CXXCPFX = $(CC) $(MAIN) $(IMPL_FILES) -o bin/$(BIN) $(CXXFLAGS)  
 
 default: $(MAIN)
-	if [ ! -d bin/ ]; then mkdir bin/; fi
-	if [ ! -d dbg/ ]; then mkdir dbg/; fi
+	$(MKDIRS)
+	$(CXXCPFX) -$(OFLAG)
+	$(REPLACE_FILES)
 
-	$(CC) $(MAIN) $(SRC_FILES) -o $(BIN) $(CXXFLAGS) 
+fast:
+	$(MKDIRS)
+	$(CXXCPFX) -Ofast
+	$(REPLACE_FILES)
 
-	if [ -d dbg/main.elf.dSYM/ ]; then rm -r dbg/main.elf.dSYM/; fi
-	if [ -d bin/main.elf.dSYM/ ]; then mv bin/main.elf.dSYM/ dbg//; fi
+debug:
+	$(MKDIRS)
+	$(CXXCPFX) -Og
+	$(REPLACE_FILES)
+
+size:
+	$(MKDIRS)
+	$(CXXCPFX) -Os
+	$(REPLACE_FILES)
 
 verbose: $(MAIN)
-	if [ ! -d bin/ ]; then mkdir bin/; fi
-	if [ ! -d dbg/ ]; then mkdir dbg/; fi
+	$(MKDIRS)
+	$(CXXCPFX) -$(OFLAG) -v
+	$(REPLACE_FILES)
 
-	$(CC) $(MAIN) $(SRC_DIR)/*.cc -o $(BIN) $(CXXFLAGS) -v
-
-	if [ -d dbg/main.elf.dSYM/ ]; then rm -r dbg/main.elf.dSYM/; fi
-	if [ -d bin/main.elf.dSYM/ ]; then mv bin/main.elf.dSYM/ dbg//; fi
-
-clean: $(BIN) $(BIN).dSYM/
-	rm $(BIN)
-	rm -r $(BIN).dSYM/
+clean: bin/$(BIN) bin/$(BIN).dSYM/
+	rm bin/$(BIN)
+	rm -r bin/$(BIN).dSYM/
 	

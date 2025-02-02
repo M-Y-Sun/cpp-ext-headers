@@ -4,7 +4,7 @@ OFLAG ?= O1
 
 FILE = main
 MAIN ?=  src/$(FILE).cc
-BIN = $(FILE).elf
+BIN = $(FILE)
 
 IMPL_DIR = src/impl
 IMPL_FILES := $$(find $(IMPL_DIR) -name '*.cc' | xargs)

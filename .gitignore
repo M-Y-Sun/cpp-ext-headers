@@ -29,5 +29,7 @@
 *.elf
 *.elf.dSYM
 
+bin/
+dbg/
 .cache
 compile_commands.json
